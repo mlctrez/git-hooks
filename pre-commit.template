@@ -1,0 +1,9 @@
+#!/bin/bash
+
+export GIT_HOOKS_HOME=@@GIT_HOOKS_HOME@@
+
+export PYTHONPATH=$GIT_HOOKS_HOME:$GIT_HOOKS_HOME/python
+
+python -u $GIT_HOOKS_HOME/precommit.py
+
+
