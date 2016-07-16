@@ -65,13 +65,16 @@ def mkdir_p(path):
 
 def find_commits():
     changed_files = []
-    status_lines = execute(GIT_DIFF_INDEX, fail_on_error=True)
+    status_lines = execute(GIT_DIFF_INDEX)
     for line in status_lines:
         line = line.strip()
 
         # output is FLAG\tFILENAME
 
         (flag, filename) = line.split('\t')
+
+        # we're not concerned with delete files
+
         if flag is 'D':
             continue
         changed_files.append(filename)
