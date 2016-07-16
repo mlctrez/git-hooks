@@ -20,6 +20,7 @@ def format(files=None, from_git=True):
         hookutils.execute('gofmt %s' % file_in)
 
         if from_git and hookutils.hashfile(file_in) != before_hash:
+            print 'gofmt occurred on %s' % file_in
             hookutils.execute('git add %s' % file_in)
 
 
