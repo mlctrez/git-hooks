@@ -73,7 +73,7 @@ def find_commits():
 
         (flag, filename) = line.split('\t')
 
-        # we're not concerned with delete files
+        # we're not concerned with deleted files
 
         if flag is 'D':
             continue
