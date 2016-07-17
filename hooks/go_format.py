@@ -3,10 +3,12 @@
 
 import os
 
+import sys
+
 import hookutils
 
 
-def format(files=None, from_git=True):
+def format_files(files=None, from_git=True):
     """
     Executes go fmt on the provided files.
     """
@@ -25,11 +27,10 @@ def format(files=None, from_git=True):
 
 
 def run():
-    os.chdir(hookutils.git_toplevel())
 
-    go_files = filter(lambda x: x.endswith('.go'), hookutils.find_commits())
+    from_git = len(sys.argv) == 1
 
-    format(go_files, from_git=True)
+    format_files(hookutils.get_files_to_format('.go'), from_git=from_git)
 
 
 if __name__ == '__main__':

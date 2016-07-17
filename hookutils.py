@@ -6,6 +6,8 @@ import hashlib
 import os
 from subprocess import Popen, PIPE, STDOUT, CalledProcessError, check_output
 
+import sys
+
 GIT_DIFF_INDEX = 'git diff-index --name-status --cached HEAD'
 
 
@@ -106,4 +108,16 @@ def git_toplevel():
 
     return execute('git rev-parse --show-toplevel')[0]
 
+
+def get_files_to_format(extension):
+
+    def extension_filter(filename):
+        return filename.endswith(extension)
+
+    if len(sys.argv) > 0:
+        args = sys.argv[1:]
+        return filter(extension_filter, args)
+    else:
+        os.chdir(git_toplevel())
+        return filter(extension_filter, find_commits())
 

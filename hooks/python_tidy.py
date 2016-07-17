@@ -3,12 +3,13 @@
 
 import os
 import shutil
+import sys
 import tempfile
 
 import hookutils
 
 
-def tidy_files(files=None, from_git=True):
+def format_files(files=None, from_git=True):
     """
     Executes tidy on the provided list of files, optionally calling
     git add for each file that changed due to formatting.
@@ -58,13 +59,10 @@ def tidy_files(files=None, from_git=True):
 
 def run():
 
-    os.chdir(hookutils.git_toplevel())
+    from_git = len(sys.argv) == 1
 
-    python_files = filter(lambda x: x.endswith('.py'), hookutils.find_commits())
-
-    tidy_files(python_files, from_git=True)
+    format_files(hookutils.get_files_to_format('.py'), from_git=from_git)
 
 
 if __name__ == '__main__':
     run()
-

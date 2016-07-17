@@ -6,7 +6,9 @@ import shutil
 import tempfile
 from subprocess import Popen
 
-from hookutils import git_toplevel, hashfile, execute, find_commits
+import sys
+
+from hookutils import git_toplevel, hashfile, execute, find_commits, get_files_to_format
 
 header_cache = None
 
@@ -57,7 +59,7 @@ def jar_location():
     return os.path.join(os.environ.get('GIT_HOOKS_HOME'), 'java', 'google-java-format.jar')
 
 
-def format(files=None, from_git=True):
+def format_files(files=None, from_git=True):
     """
     Formats java files using the google-java-format jar.
     """
@@ -102,11 +104,9 @@ def format(files=None, from_git=True):
 
 def run():
 
-    os.chdir(git_toplevel())
+    from_git = len(sys.argv) == 1
 
-    java_files = filter(lambda x: x.endswith('.java'), find_commits())
-
-    format(java_files, from_git=True)
+    format_files(get_files_to_format('.java'), from_git=from_git)
 
 
 if __name__ == '__main__':
