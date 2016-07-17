@@ -62,6 +62,8 @@ def format_files(files=None, from_git=True):
     Formats java files using the google-java-format jar.
     """
 
+    git_present = has_head_ref()
+
     for file_in in files:
 
         file_in = os.path.abspath(file_in)
@@ -73,8 +75,6 @@ def format_files(files=None, from_git=True):
             continue
 
         file_out = tempfile.mktemp()
-
-        git_present = has_head_ref()
 
         command = 'java -jar ' + jar_location() + ' ' + file_in
 

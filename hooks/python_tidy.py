@@ -11,7 +11,7 @@ from hookutils import hashfile, execute, get_files_to_format
 
 def format_files(files=None, from_git=True):
     """
-    Executes tidy on the provided list of files, optionally calling
+    Executes PythonTidy on the provided list of files, optionally calling
     git add for each file that changed due to formatting.
     """
 
