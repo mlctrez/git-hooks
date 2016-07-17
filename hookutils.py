@@ -26,7 +26,8 @@ def execute(command, fail_on_error=True):
     for line in proc.stdout.readlines():
         lines.append(line.strip())
     for line in proc.stderr.readlines():
-        print 'stderr> %s' % line.strip()
+        if line[:len('exit status')] != 'exit status':
+            print 'stderr> %s' % line.strip()
     proc.wait()
     code = proc.returncode
     if code != 0 and fail_on_error:
