@@ -6,7 +6,7 @@ import shutil
 import sys
 import tempfile
 
-import hookutils
+from hookutils import hashfile, execute, get_files_to_format
 
 
 def format_files(files=None, from_git=True):
@@ -44,7 +44,7 @@ def format_files(files=None, from_git=True):
 
             # overwrite original file only if hash differs
 
-            if hookutils.hashfile(file_in) != hookutils.hashfile(file_out):
+            if hashfile(file_in) != hashfile(file_out):
                 print ' tidying %s' % file_in
                 shutil.copymode(file_in, file_out)
                 shutil.copy(file_out, file_in)
@@ -52,7 +52,7 @@ def format_files(files=None, from_git=True):
                 # re-add modified file to git if required
 
                 if from_git:
-                    hookutils.execute('git add %s' % file_in)
+                    execute('git add %s' % file_in)
         finally:
             os.remove(file_out)
 
@@ -61,7 +61,7 @@ def run():
 
     from_git = len(sys.argv) == 1
 
-    format_files(hookutils.get_files_to_format('.py'), from_git=from_git)
+    format_files(get_files_to_format('.py'), from_git=from_git)
 
 
 if __name__ == '__main__':

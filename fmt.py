@@ -15,11 +15,15 @@ def run():
 
     hook_dir = os.path.join(hooks_home, 'hooks')
 
+    # TODO: quoting of files?
+    files = ' '.join(sys.argv[1:])
+
     for f in os.listdir(hook_dir):
         h = os.path.join(hook_dir, f)
         if os.path.isfile(h):
-            check_call('python %s' % h, shell=True)
+            check_call('python %s %s' % (h, files), shell=True)
 
 if __name__ == '__main__':
+    # TODO: usage
     run()
 

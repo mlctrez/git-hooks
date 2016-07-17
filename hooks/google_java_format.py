@@ -3,12 +3,11 @@
 
 import os
 import shutil
+import sys
 import tempfile
 from subprocess import Popen
 
-import sys
-
-from hookutils import git_toplevel, hashfile, execute, find_commits, get_files_to_format
+from hookutils import git_toplevel, hashfile, execute, get_files_to_format, has_head_ref
 
 header_cache = None
 
@@ -34,7 +33,6 @@ def add_header(filepath):
     header = get_header()
 
     if len(header) == 0:
-
         # don't touch file if no header present
 
         return
@@ -76,6 +74,8 @@ def format_files(files=None, from_git=True):
 
         file_out = tempfile.mktemp()
 
+        git_present = has_head_ref()
+
         command = 'java -jar ' + jar_location() + ' ' + file_in
 
         try:
@@ -85,7 +85,8 @@ def format_files(files=None, from_git=True):
                 if proc.returncode != 0:
                     exit(proc.returncode)
 
-            add_header(file_out)
+            if git_present:
+                add_header(file_out)
 
             # overwrite original file only if hash differs
 
@@ -103,7 +104,6 @@ def format_files(files=None, from_git=True):
 
 
 def run():
-
     from_git = len(sys.argv) == 1
 
     format_files(get_files_to_format('.java'), from_git=from_git)
