@@ -17,18 +17,22 @@ def format_files(files=None, from_git=True):
 
         file_in = os.path.abspath(file_in)
 
+        print 'go_format.py checking %s' % file_in
+
         before_hash = hookutils.hashfile(file_in)
 
         hookutils.execute('gofmt -w %s' % file_in)
 
         if from_git and hookutils.hashfile(file_in) != before_hash:
-            print 'gofmt changed %s' % file_in
+            print 'go_format.py  changed %s' % file_in
             hookutils.execute('git add %s' % file_in)
 
 
 def run():
 
     from_git = len(sys.argv) == 1
+
+    print 'go_format.py  %s' % from_git
 
     format_files(hookutils.get_files_to_format('.go'), from_git=from_git)
 

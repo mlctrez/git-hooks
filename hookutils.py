@@ -114,10 +114,11 @@ def get_files_to_format(extension):
     def extension_filter(filename):
         return filename.endswith(extension)
 
-    if len(sys.argv) > 0:
+    if len(sys.argv) > 1:
         args = sys.argv[1:]
         return filter(extension_filter, args)
     else:
         os.chdir(git_toplevel())
         return filter(extension_filter, find_commits())
+
 
