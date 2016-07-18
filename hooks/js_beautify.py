@@ -19,10 +19,10 @@ def format_files(files=None, from_git=True):
 
         before_hash = hookutils.hashfile(file_in)
 
-        hookutils.execute('gofmt -w %s' % file_in)
+        hookutils.execute('js-beautify -n -r -s 2 -j %s' % file_in)
 
         if from_git and hookutils.hashfile(file_in) != before_hash:
-            print 'gofmt changed %s' % file_in
+            print 'js-beautify changed %s' % file_in
             hookutils.execute('git add %s' % file_in)
 
 
@@ -30,7 +30,7 @@ def run():
 
     from_git = len(sys.argv) == 1
 
-    format_files(hookutils.get_files_to_format('.go'), from_git=from_git)
+    format_files(hookutils.get_files_to_format('.js'), from_git=from_git)
 
 
 if __name__ == '__main__':
