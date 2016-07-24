@@ -4,12 +4,12 @@
 import errno
 import hashlib
 import os
-from subprocess import Popen, PIPE, STDOUT, CalledProcessError, check_output
-
 import sys
+from subprocess import Popen, PIPE, CalledProcessError, check_output
 
-GIT_DIFF_INDEX = 'git diff-index --name-status --cached HEAD'
 
+# GIT_DIFF_INDEX =
+# GIT_DIFF_NO_HEAD = 'git diff-index --diff-filter=ACM --cached --name-only 4b825dc642cb6eb9a060e54bf8d69288fbee4904'
 
 def execute(command, fail_on_error=True):
     """
@@ -36,18 +36,11 @@ def execute(command, fail_on_error=True):
     return lines
 
 
-def has_head_ref():
-    """
-    Check if this is the first commit, preventing errors in downstream hooks
-    that use "git diff-index --name-status --cached HEAD"
-    :return: true if .git/HEAD points to a non existent .git/refs/heads file
-    """
-
+def calculate_head():
     try:
-        check_output(GIT_DIFF_INDEX, stderr=STDOUT, shell=True)
-        return True
+        return check_output('git rev-parse --verify HEAD', shell=True, stderr=PIPE).strip()
     except CalledProcessError:
-        return False
+        return '4b825dc642cb6eb9a060e54bf8d69288fbee4904'
 
 
 def mkdir_p(path):
@@ -67,21 +60,7 @@ def mkdir_p(path):
 
 
 def find_commits():
-    changed_files = []
-    status_lines = execute(GIT_DIFF_INDEX)
-    for line in status_lines:
-        line = line.strip()
-
-        # output is FLAG\tFILENAME
-
-        (flag, filename) = line.split('\t')
-
-        # we're not concerned with deleted files
-
-        if flag is 'D':
-            continue
-        changed_files.append(filename)
-    return changed_files
+    return execute('git diff-index --diff-filter=ACM --cached --name-only ' + os.environ['_GIT_HEAD'])
 
 
 def hashfile(file_path):
@@ -102,12 +81,20 @@ def hashfile(file_path):
     return hasher.hexdigest()
 
 
+def in_git_directory():
+    try:
+        git_toplevel()
+        return True
+    except CalledProcessError:
+        return False
+
+
 def git_toplevel():
     """
     Returns the git toplevel directory
     """
 
-    return execute('git rev-parse --show-toplevel')[0]
+    return check_output('git rev-parse --show-toplevel', shell=True, stderr=PIPE).strip()
 
 
 def get_files_to_format(extension):

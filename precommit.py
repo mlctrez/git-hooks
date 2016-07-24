@@ -1,15 +1,14 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from subprocess import check_call
-import hookutils
 import os
+from subprocess import check_call
+
+import hookutils
 
 if __name__ == '__main__':
 
-    if not hookutils.has_head_ref():
-        print 'skipping hooks on initial commit'
-        exit(0)
+    os.environ['_GIT_HEAD'] = hookutils.calculate_head()
 
     home = os.environ.get('GIT_HOOKS_HOME', None)
     if not home:
